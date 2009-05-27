@@ -2,7 +2,7 @@ require "ConstituentManagementSession"
 
 puts "v: #{ConvioSession.v()}"
 
-ConvioSession.secure_domain="https://secure.consumersunion.org"                   
+ConvioSession.secure_domain="https://secure.consumersunion.org/"                   
 ConvioSession.organization=nil
 
 ConvioSession.response_format="json"

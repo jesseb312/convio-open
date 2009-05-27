@@ -29,9 +29,15 @@ class Constituent < ConstituentManagementSession
     @@source=value
   end
   
-  @fields={}
+  @fields=nil
   
-  attr_reader :fields
+  def fields()
+    if @fields==nil
+      refresh()
+    end
+    
+    return @fields.clone
+  end
 
   @email=nil
   @memberId=nil
