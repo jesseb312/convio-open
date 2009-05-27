@@ -1,4 +1,6 @@
 require 'net/http'
+require "net/https"
+
 require 'json'
 
 class ConvioSession
@@ -61,22 +63,27 @@ class ConvioSession
     end
     
     @defaultParams={
-      :v=>@@v,
-      :response_format=>@@response_format,
-      :api_key=>@@api_key,
+      'v'=>@@v,
+      'response_format'=>@@response_format,
+      'api_key'=>@@api_key,
     }                                      
   end
   
   def convio_api_call(url, params)
     puts "convio_api_call: #{url}"
-    p params
-    res = Net::HTTP.post_form(URI.parse(url), params)                                    
+    p params    
+    urlp=URI.parse(url)
+    http = Net::HTTP.new(urlp.host, urlp.port)
+    http.use_ssl = (urlp.scheme == 'https')
+    request = Net::HTTP::Post.new(urlp.path, params)
+    res = http.request(request)
+    
     case res
-      when Net::HTTPSuccess
-        return JSON.parse(res.body)
-      else
-        puts "Error in convio_api_call: #{res.error!}"
-        return nil
-    end                                      
-  end
+    when Net::HTTPSuccess
+      return res.body
+    else
+      puts "Error in convio_api_call: #{res.error!}"
+      return nil
+    end
+  end                                      
 end
