@@ -82,6 +82,7 @@ class ConvioSession
     when Net::HTTPSuccess
       return res.body
     else
+      puts "body: #{res.body}"
       puts "Error in convio_api_call: #{res.error!}"
       return nil
     end
