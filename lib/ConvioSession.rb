@@ -75,8 +75,7 @@ class ConvioSession
     urlp=URI.parse(url)
     http = Net::HTTP.new(urlp.host, urlp.port)
     http.use_ssl = (urlp.scheme == 'https')
-    request = Net::HTTP::Post.new(urlp.path, params)
-    res = http.request(request)
+    res=http.post(urlp.path, form_encode(params))
     
     case res
     when Net::HTTPSuccess
@@ -87,4 +86,12 @@ class ConvioSession
       return nil
     end
   end                                      
+  
+  def form_encode(map)
+    data=''
+    map.each { |key,value|
+      data << "#{key}=#{value}&"
+    }
+    return data[0...-1]
+  end
 end
