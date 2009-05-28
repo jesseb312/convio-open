@@ -197,7 +197,7 @@ class Constituent < ConstituentManagementSession
     @email=email
     
     save()
-#    refresh()
+    refresh()
   end
   
   def refresh()
@@ -243,6 +243,8 @@ class Constituent < ConstituentManagementSession
 
     @interests=[]
     result=getUserInterests(id=@id)
+    p 'interests result:'
+    p result
     fieldTypes=result['getConsInterestsResponse']['interest']  
     fieldTypes.each { |data|
       id=data['id']
@@ -252,7 +254,7 @@ class Constituent < ConstituentManagementSession
       for_web=data['for_web']
       
       interest=Interest.new(id, label, path, for_email, for_web)
-      @interests << interests
+      @interests << interest
     }    
   end
   
