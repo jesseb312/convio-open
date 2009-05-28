@@ -4,31 +4,31 @@ require 'Group'
 require 'Interest'
 
 class Constituent < ConstituentManagementSession
-  @@constituentClass=nil
+  @@constituentClass=Constituent
   @@welcome=nil
   @@source=nil
   
-  def constituentClass()
+  def Constituent.constituentClass()
     return @@constituentClass
   end
   
-  def constituentClass=(value)
+  def Constituent.constituentClass=(value)
     @@constituentClass=value
   end
   
-  def welcome()
+  def Constituent.welcome()
     return @@welcome
   end
   
-  def welcome=(value)
+  def Constituent.welcome=(value)
     @@welcome=value
   end
   
-  def source()
+  def Constituent.source()
     return @@source
   end
   
-  def source=(value)
+  def Constituent.source=(value)
     @@source=value
   end
   
@@ -203,10 +203,12 @@ class Constituent < ConstituentManagementSession
   def refresh()
     @fields={}
     result=getUser(cons_id=@id, member_id=@memberId, primary_email=@email)
+    puts "$^$^$^$^ result:"
+    p result
     fieldValues=result['getConsResponse']
     
     result=listUserFields()
-    puts "result:"
+    puts "%&%&%& result:"
     p result
     fieldTypes=result['listConsFieldsResponse']['field']  
     fieldTypes.each { |data|
@@ -214,9 +216,25 @@ class Constituent < ConstituentManagementSession
       label=data['label']
       type=data['valueType']
       maxChars=data['maxChars']
-  
-      value=fieldValues[name]
       
+      parts=name.split('.')
+      puts "looking up:"
+      p parts
+      if parts.length==1
+        value=fieldValues[name]      
+      else
+        value=fieldValues
+        parts.each { |part|
+          if value
+            if value.class==Array
+              value=value[part.to_i]
+            else
+              value=value[part]
+            end
+          end
+        }
+      end
+  
       if type=='ENUMERATION'
         result=listUserFieldChoices(name)
         choices=result['listConsFieldChoicesResponse']['choice']
@@ -269,12 +287,7 @@ class Constituent < ConstituentManagementSession
   
   def Constituent.getConstituentById(id)
     puts "gcbi #{id}"
-    if @@constituentClass    
-      puts "constituentClass not yet supported"
-      return nil
-    else
-      return Constituent.new(id=id)
-    end
+    return @@constituentClass.new(id=id)
   end
   
   def Constituent.getConstituentByEmail(email)

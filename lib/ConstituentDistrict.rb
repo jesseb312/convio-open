@@ -1,4 +1,4 @@
-DISTRICT_TYPES=["home_country", "state_house_dist_id", "state_senate_dist_id", "cong_dist_id"]
+DISTRICT_TYPES=["home_county", "state_house_dist_id", "state_senate_dist_id", "cong_dist_id"]
 
 class ConstituentDistrict < ConstituentManagementSession
   @id=nil
