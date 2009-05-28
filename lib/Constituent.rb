@@ -1,4 +1,7 @@
 require 'ConstituentManagementSession'
+require 'Field'
+require 'Group'
+require 'Interest'
 
 class Constituent < ConstituentManagementSession
   @@constituentClass=nil
@@ -105,21 +108,55 @@ class Constituent < ConstituentManagementSession
   end
 
   def Constituent.getConstituent(idHash)
-    if idHash.containsKey(:memberId)
+    p "gc", idHash
+    
+    if idHash.has_key?('id')
+      ids=idHash['id']
+      if ids.class==Array
+        cons=[]
+        ids.each { |id|
+          cons << Constituent.getOneConstituent({'id'=>id})
+        }        
+        return cons
+      else
+        return Constituent.getOneConstituent({'id'=>ids})
+      end    
+    elsif idHash.has_key?(:memberId)
+      memberIds=idHash[:memberId]
+      if memberIds.class==Array
+        cons=[]
+        ids.each { |id|
+          cons << Constituent.getOneConstituent({:id=>id})
+        }        
+        return cons
+      else
+        return Constituent.getOneConstituent({:id=>id})
+      end    
+    elsif idHash.has_key?(:email)
+      emails=idHash[:email]
+      if ids.class==Array
+        cons=[]
+        ids.each { |id|
+          cons << Constituent.getOneConstituent({:id=>id})
+        }
+        return cons
+      else
+        return Constituent.getOneConstituent({:id=>id})
+      end    
+    end
+  end
+  
+  def Constituent.getOneConstituent(idHash)    
+    p "goc", idHash
+    if idHash.has_key?('id')
+      value=idHash['id']
+      return Constituent.getConstituentById(value)
+    elsif idHash.has_key?(:memberId)
       value=idHash[:memberId]
-      if type(value)==list:
-      else
-      end
-    elsif idHash.containsKey(:id)
-      value=idHash[:id]
-      if type(value)==list:
-      else
-      end
-    elsif idHash.containsKeys(:email)
+      return Constituent.getConstituentByMemberId(value)
+    elsif idHash.has_key?(:email)
       value=idHash[:email]
-      if type(value)==list:
-      else
-      end
+      return Constituent.getConstituentByEmail(value)
     else
       puts "meberID, id, or email required"
       return nil
@@ -153,12 +190,14 @@ class Constituent < ConstituentManagementSession
   private
 
   def initialize(id=nil, memberId=nil, email=nil)
+    super()
+    
     @id=id
     @memberId=memberId
     @email=email
     
     save()
-    refresh()
+#    refresh()
   end
   
   def refresh()
@@ -167,8 +206,10 @@ class Constituent < ConstituentManagementSession
     fieldValues=result['getConsResponse']
     
     result=listUserFields()
+    puts "result:"
+    p result
     fieldTypes=result['listConsFieldsResponse']['field']  
-    resp.each { |data|
+    fieldTypes.each { |data|
       name=data['name']
       label=data['label']
       type=data['valueType']
@@ -183,29 +224,34 @@ class Constituent < ConstituentManagementSession
         choices=nil
       end
       
-      field=new Field(name, label, type, value, choices, maxChars)
+      field=Field.new(name, label, type, value, choices, maxChars)
       @fields[name]=field
     }
-    
-    result=getUserGroups()
-    fieldTypes=result['listConsGroupsResponse']['group']  
-    resp.each { |data|
+
+    @groups=[]
+    result=getUserGroups(cons_id=@id)
+    puts "result:"
+    p result
+    fieldTypes=result['getConsGroupsResponse']['group']  
+    fieldTypes.each { |data|
       id=data['id']
       label=data['label']
-      group=new Group(id, label)
+      group=Group.new(id, label)
+      puts "appending #{@groups} #{group}"
       @groups << group
     }
-    
-    result=getUserInterests()
-    fieldTypes=result['listConsInterestsResponse']['interest']  
-    resp.each { |data|
+
+    @interests=[]
+    result=getUserInterests(id=@id)
+    fieldTypes=result['getConsInterestsResponse']['interest']  
+    fieldTypes.each { |data|
       id=data['id']
       label=data['label']
       path=data['path']
       for_email=data['for_email']
       for_web=data['for_web']
       
-      interest=new Interest(id, label, path, for_email, for_web)
+      interest=Interest.new(id, label, path, for_email, for_web)
       @interests << interests
     }    
   end
@@ -215,16 +261,17 @@ class Constituent < ConstituentManagementSession
       puts "constituentClass not yet supported"
       return nil
     else
-      return Consituent.new(memberId=memberId)
+      return Constituent.new(memberId=memberId)
     end
   end
   
   def Constituent.getConstituentById(id)
+    puts "gcbi #{id}"
     if @@constituentClass    
       puts "constituentClass not yet supported"
       return nil
     else
-      return Consituent.new(id=id)
+      return Constituent.new(id=id)
     end
   end
   
@@ -233,7 +280,7 @@ class Constituent < ConstituentManagementSession
       puts "constituentClass not yet supported"
       return nil
     else
-      return Consituent.new(email=email)
+      return Constituent.new(email=email)
     end
   end
   

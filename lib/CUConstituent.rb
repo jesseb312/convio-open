@@ -1,35 +1,36 @@
 require 'Constituent'
+require 'ConstituentDistrict'
 
 class CUConstituent < Constituent
   @districts=nil  
-  @congressionalDistricts=nil
-  @stateSenateDistricts=nil
-  @stateHouseDistricts=nil
-  @countyDistricts=nil
+  @congressionalDistrict=nil
+  @stateSenateDistrict=nil
+  @stateHouseDistrict=nil
+  @countyDistrict=nil
   
   def districts()
-    checkDistrcts()
+    checkDistricts()
     return @districts.clone
   end
 
-  def congressionalDistricts()
-    checkDistrcts()
-    return @congressionalDistricts.clone
+  def congressionalDistrict()
+    checkDistricts()
+    return @congressionalDistrict
   end
 
-  def stateSenateDistricts()
-    checkDistrcts()
-    return @stateSenateDistricts.clone
+  def stateSenateDistrict()
+    checkDistricts()
+    return @stateSenateDistrict
   end
   
-  def stateHouseDistricts()
-    checkDistrcts()
-    return @stateHouseDistricts.clone
+  def stateHouseDistrict()
+    checkDistricts()
+    return @stateHouseDistrict
   end
 
-  def countyDistricts()
-    checkDistrcts()
-    return @countyDistricts.clone
+  def countyDistrict()
+    checkDistricts()
+    return @countyDistrict
   end
   
   private
@@ -45,8 +46,27 @@ class CUConstituent < Constituent
       refresh()
     end
     
-    fields.each { |name, field|
+    @districts=[]    
+    
+    districts=fields['districts']
+    DISTRCT_TYPES.each { |type|
+      default=districts[type]
+      override=districts[type+'_override']
+      district=ConstituentDistrict.new(@id, type, default, override)
       
+      @districts << district
+      
+      if type=='home_county'
+        @countDistricts=district
+      elsif type=='state_house_dist_id'
+        @stateHouseDistrict=district
+      elsif type=='state_senate_dist_id'
+        @stateSenateDistrict=district
+      elsif type=='cong_dist_id'
+        @congressionalDistrict=district
+      else
+        puts "Error: unsupported district type: #{type}"
+      end
     }
   end
 end

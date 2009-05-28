@@ -1,6 +1,8 @@
 require 'net/http'
 require "net/https"
 
+require 'rubygems'
+gem 'json', ">= 1.1.3"
 require 'json'
 
 class ConvioSession
@@ -79,7 +81,7 @@ class ConvioSession
     
     case res
     when Net::HTTPSuccess
-      return res.body
+      return JSON.parse(res.body)
     else
       puts "body: #{res.body}"
       puts "Error in convio_api_call: #{res.error!}"
