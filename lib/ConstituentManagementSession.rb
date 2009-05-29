@@ -139,7 +139,6 @@ class ConstituentManagementSession < ConvioSession
   # This method provides a convenience wrapper around the Convio Client create and update APIs. When called, this method will first try to locate* and update an existing record, and if no existing record can be found, will create a new record. See the create and update documentation for further detailed discussion of those APIs.
   def createOrUpdate(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil, source=nil, no_welcome=nil)
     puts "cou(#{cons_id}. #{member_id}, #{primary_email})"
-    puts "dfp: #{@defaultParams}"
     params=@defaultParams.clone
     p params
     params['method']="createOrUpdate"
@@ -166,21 +165,16 @@ class ConstituentManagementSession < ConvioSession
       params['add_group_ids']=add_group_ids
     end
     if remove_group_ids
-      params['add_remove_ids']=add_remove_ids
-    end
-    
-    if add_group_ids
-      params['add_group_ids']=add_group_ids
-    end
-    if remove_group_ids
-      params['add_remove_ids']=add_remove_ids
+      puts "REMOVING GROUPS~~~~~~~~~"
+      p remove_group_ids
+      params['remove_group_ids']=remove_group_ids
     end
     
     if add_interest_ids
       params['add_interest_ids']=add_interest_ids
     end
     if remove_interest_ids
-      params['add_interest_ids']=add_interest_ids
+      params['remove_interest_ids']=remove_interest_ids
     end
     
     if source

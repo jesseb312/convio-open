@@ -38,7 +38,7 @@ class Group
     @members=value
   end
   
-  def initialize(id, label)
+  def initialize(id, label=nil)
     @id=id
     @label=label
   end

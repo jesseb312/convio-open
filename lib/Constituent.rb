@@ -164,7 +164,43 @@ class Constituent < ConstituentManagementSession
   end
 
   def save()
-    createOrUpdate(@id, @memberId, @email, @addCenters, @addGroups, @addInterests, @delCenters, @delGroups, @delInterests, @@source, !@@welcome)
+    if @addCenters
+      @addCentersString=@addCenters.map{|group| group.id}.join(',')
+    else
+      @addCentersString=nil
+    end
+        
+    if @delCenters
+      @delCentersString=@delCenters.map{|group| group.id}.join(',')
+    else
+      @delCentersString=nil
+    end
+    
+    if @addGroups
+      @addGroupsString=@addGroups.map{|group| group.id}.join(',')
+    else
+      @addGroupsString=nil
+    end
+
+    if @delGroups
+      @delGroupsString=@delGroups.map{|group| group.id}.join(',')
+    else
+      @delGroupsString=nil
+    end
+    
+    if @addInterests
+      @addInterestsString=@addInterests.map{|group| group.id}.join(',')
+    else
+      @addInterestsString=nil
+    end
+
+    if @delInterest
+      @delInterestsString=@delInterests.map{|group| group.id}.join(',')
+    else
+      @delInterestsString=nil
+    end
+    
+    createOrUpdate(@id, @memberId, @email, @addCentersString, @addGroupsString, @addInterestsString, @delCentersString, @delGroupsString, @delInterestsString, @@source, !@@welcome)
     @addCenters=[]
     @addGroups=[]
     @addInterests=[]
@@ -218,8 +254,6 @@ class Constituent < ConstituentManagementSession
       maxChars=data['maxChars']
       
       parts=name.split('.')
-      puts "looking up:"
-      p parts
       if parts.length==1
         value=fieldValues[name]      
       else
@@ -248,14 +282,11 @@ class Constituent < ConstituentManagementSession
 
     @groups=[]
     result=getUserGroups(cons_id=@id)
-    puts "result:"
-    p result
     fieldTypes=result['getConsGroupsResponse']['group']  
     fieldTypes.each { |data|
       id=data['id']
       label=data['label']
       group=Group.new(id, label)
-      puts "appending #{@groups} #{group}"
       @groups << group
     }
 
@@ -277,26 +308,15 @@ class Constituent < ConstituentManagementSession
   end
   
   def Constituent.getConstituentByMemberId(memberId)
-    if @@constituentClass    
-      puts "constituentClass not yet supported"
-      return nil
-    else
-      return Constituent.new(memberId=memberId)
-    end
+    return @@constituentClass.new(memberId=memberId)
   end
   
   def Constituent.getConstituentById(id)
-    puts "gcbi #{id}"
     return @@constituentClass.new(id=id)
   end
   
   def Constituent.getConstituentByEmail(email)
-    if @@constituentClass    
-      puts "constituentClass not yet supported"
-      return nil
-    else
-      return Constituent.new(email=email)
-    end
+    return @@constituentClass.new(email=email)
   end
   
   def compare(a, b)
