@@ -41,6 +41,12 @@ class Constituent < ConstituentManagementSession
     
     return @fields.clone
   end
+  
+  def setField(name, value)
+    @modifiedFields[name]=value.value
+    field=fields[name]
+    field.value=value.value
+  end
 
   @email=nil
   @memberId=nil
@@ -58,6 +64,7 @@ class Constituent < ConstituentManagementSession
   @delGroups=[]
   @addInterests=[]
   @delInterest=[]
+  @modifiedFields={}
 
   def centers()
     return @centers.clone
@@ -197,28 +204,37 @@ class Constituent < ConstituentManagementSession
       @delInterestsString=nil
     end
     
-    createOrUpdate(@id, @memberId, @email, @addCentersString, @addGroupsString, @addInterestsString, @delCentersString, @delGroupsString, @delInterestsString, @@source, !@@welcome)
+    createOrUpdate(@id, @memberId, @email, @addCentersString, @addGroupsString, @addInterestsString, @delCentersString, @delGroupsString, @delInterestsString, @@source, !@@welcome, @modifiedFields)
     @addCenters=[]
     @addGroups=[]
     @addInterests=[]
     @delCenters=[]
     @delGroups=[]
     @delInterests=[]
+    @modifiedFields={}
   end
 
   def convio_attr_read(fieldList)
     fieldList.each { |name| 
-      code="def #{name}; return fields[name]; end;"+
-           "def #{name}=(value); fields[name]=value; end;"
+      code="def #{name}; return fields[name]; end;"
       self.class_eval(code)
     }
   end
 
-#  def convio_attr_write(fieldList)
-#  end
+  def convio_attr_write(fieldList)
+    fieldList.each { |name| 
+      code="def #{name}=(value); setField(name, value); end"
+      self.class_eval(code)
+    }
+  end
   
-#  def convio_attr_accessor(fieldList)
-#  end
+  def convio_attr_accessor(fieldList)
+    fieldList.each { |name| 
+      code="def #{name}; return fields[name]; end;"+
+           "def #{name}=(value); setField(name, value); end"
+      self.class_eval(code)
+    }
+  end
   
   private
 
@@ -269,7 +285,7 @@ class Constituent < ConstituentManagementSession
         choices=nil
       end
       
-      field=Field.new(name, label, type, value, choices, maxChars)
+      field=Field.new(self, name, label, type, value, choices, maxChars)
       @fields[name]=field
     }
 

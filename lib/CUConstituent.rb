@@ -51,7 +51,7 @@ class CUConstituent < Constituent
     DISTRICT_TYPES.each { |type|
       default=fields["districts."+type]
       override=fields["districts."+type+'_override']
-      district=ConstituentDistrict.new(@id, type, default, override)
+      district=ConstituentDistrict.new(self, @id, type, default, override)
       
       @districts << district
       
