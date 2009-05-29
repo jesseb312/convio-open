@@ -87,7 +87,8 @@ class ConstituentManagementSession < ConvioSession
   end
 
   # This method updates an existing user record and returns the record's unique identifier.
-  def update(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil)
+  def update(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil, fields=nil)
+    puts "update", cons_id, fields
     params=@defaultParams.clone
     params['method']="update"
     
@@ -130,12 +131,18 @@ class ConstituentManagementSession < ConvioSession
       params['add_interest_ids']=add_interest_ids
     end
     
+    if fields
+      fields.each {|key, value|
+        params[key]=value
+      }
+    end
+    
     result=convio_api_call(@url, params)
     return result
   end
 
   # This method provides a convenience wrapper around the Convio Client create and update APIs. When called, this method will first try to locate* and update an existing record, and if no existing record can be found, will create a new record. See the create and update documentation for further detailed discussion of those APIs.
-  def createOrUpdate(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil, source=nil, no_welcome=nil)
+  def createOrUpdate(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil, source=nil, no_welcome=nil, fields=nil)
     params=@defaultParams.clone
     params['method']="createOrUpdate"
     
@@ -177,6 +184,12 @@ class ConstituentManagementSession < ConvioSession
     
     if no_welcome
       params['no_welcome']=no_welcome
+    end
+
+    if fields
+      fields.each {|key, value|
+        params[key]=value
+      }
     end
     
     result=convio_api_call(@url, params)
