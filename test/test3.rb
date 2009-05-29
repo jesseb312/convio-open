@@ -22,7 +22,7 @@ Constituent.constituentClass=CUConstituent
 c=Constituent.getConstituent({'id'=>greg2})
 #puts "c:"
 #p c
-#puts "districts:"
-#p c.districts
+puts "districts:"
+p c.districts
 puts "congressionalDistrict:"
 p c.congressionalDistrict

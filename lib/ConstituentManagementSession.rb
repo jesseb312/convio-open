@@ -83,7 +83,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "create() result: #{result}"
     return result
   end
 
@@ -132,15 +131,12 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "update() result: #{result}"
     return result
   end
 
   # This method provides a convenience wrapper around the Convio Client create and update APIs. When called, this method will first try to locate* and update an existing record, and if no existing record can be found, will create a new record. See the create and update documentation for further detailed discussion of those APIs.
   def createOrUpdate(cons_id=nil, member_id=nil, primary_email=nil, add_center_ids=nil, add_group_ids=nil, add_interest_ids=nil, remove_center_ids=nil, remove_group_ids=nil, remove_interest_ids=nil, source=nil, no_welcome=nil)
-    puts "cou(#{cons_id}. #{member_id}, #{primary_email})"
     params=@defaultParams.clone
-    p params
     params['method']="createOrUpdate"
     
     if cons_id
@@ -165,8 +161,6 @@ class ConstituentManagementSession < ConvioSession
       params['add_group_ids']=add_group_ids
     end
     if remove_group_ids
-      puts "REMOVING GROUPS~~~~~~~~~"
-      p remove_group_ids
       params['remove_group_ids']=remove_group_ids
     end
     
@@ -186,7 +180,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "createOrUpdate() result: #{result}"
     return result
   end
   
@@ -204,7 +197,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "listUserFields() result: #{result}"
     return result    
   end
   
@@ -221,7 +213,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "listUserFieldChoices() result: #{result}"
     return result
   end
 
@@ -246,14 +237,11 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "getGroupMembers() result: #{result}"
     return result
   end
 
   # This method returns a constituent record.
   def getUser(cons_id=nil, member_id=nil, primary_email=nil, fields=nil)
-    puts "getUser(#{cons_id}, #{member_id}, #{primary_email}, #{fields})"
-    
     params=@defaultParams.clone
     params['method']="getUser"
     
@@ -273,7 +261,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "getUser() result: #{result}"
     return result
   end
 
@@ -294,7 +281,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "getUserGroups() result: #{result}"
     return result
   end
   
@@ -314,7 +300,6 @@ class ConstituentManagementSession < ConvioSession
     end
     
     result=convio_api_call(@url, params)
-    #puts "getUserInterests() result: #{result}"
     return result
   end
 end

@@ -31,8 +31,9 @@ print "getGroupMembers:"
 p cms.getGroupMembers(adminGroup)
 print 'listUserFieldChoices:'
 p cms.listUserFieldChoices(activeField)
+print 'createOrUpdate'
+cms.createOrUpdate(cons_id=greg3)
 
 ## Methods that write to the database have not yet been tested
 #cms.create(primary_email="test@test.com")
 #cms.update(cons_id=greg3)
-#cms.createOrUpdate(cons_id=greg3)

@@ -108,8 +108,6 @@ class Constituent < ConstituentManagementSession
   end
 
   def Constituent.getConstituent(idHash)
-    p "gc", idHash
-    
     if idHash.has_key?('id')
       ids=idHash['id']
       if ids.class==Array
@@ -147,7 +145,6 @@ class Constituent < ConstituentManagementSession
   end
   
   def Constituent.getOneConstituent(idHash)    
-    p "goc", idHash
     if idHash.has_key?('id')
       value=idHash['id']
       return Constituent.getConstituentById(value)
@@ -239,13 +236,9 @@ class Constituent < ConstituentManagementSession
   def refresh()
     @fields={}
     result=getUser(cons_id=@id, member_id=@memberId, primary_email=@email)
-    puts "$^$^$^$^ result:"
-    p result
     fieldValues=result['getConsResponse']
     
     result=listUserFields()
-    puts "%&%&%& result:"
-    p result
     fieldTypes=result['listConsFieldsResponse']['field']  
     fieldTypes.each { |data|
       name=data['name']
@@ -292,8 +285,6 @@ class Constituent < ConstituentManagementSession
 
     @interests=[]
     result=getUserInterests(id=@id)
-    p 'interests result:'
-    p result
     fieldTypes=result['getConsInterestsResponse']['interest']  
     fieldTypes.each { |data|
       id=data['id']

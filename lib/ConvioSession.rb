@@ -72,8 +72,8 @@ class ConvioSession
   end
   
   def convio_api_call(url, params)
-    puts "convio_api_call: #{url}"
-    p params    
+#    puts "convio_api_call: #{url}"
+#    p params    
     urlp=URI.parse(url)
     http = Net::HTTP.new(urlp.host, urlp.port)
     http.use_ssl = (urlp.scheme == 'https')
@@ -83,8 +83,8 @@ class ConvioSession
     when Net::HTTPSuccess
       return JSON.parse(res.body)
     else
-      puts "body: #{res.body}"
       puts "Error in convio_api_call: #{res.error!}"
+      puts "body: #{res.body}"
       return nil
     end
   end                                      
